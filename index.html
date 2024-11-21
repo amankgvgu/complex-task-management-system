@@ -3,27 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Task Management System</title>
+    <title>Task Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.4s ease-out;
+      }
+    </style>
   </head>
-  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
-      <h1 class="text-2xl font-bold mb-4">Task Management System</h1>
-      <div class="mb-4 flex">
+  <body
+    class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 min-h-screen flex items-center justify-center text-gray-100"
+  >
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg">
+      <!-- Header -->
+      <h1 class="text-4xl font-bold text-center mb-6">Task Manager</h1>
+      <p class="text-sm text-gray-400 text-center mb-8">
+        Organize your tasks with a clean, modern design.
+      </p>
+
+      <!-- Input Section -->
+      <div class="flex items-center gap-3 mb-6">
         <input
           id="taskInput"
           type="text"
-          class="border border-gray-300 rounded-l px-4 py-2 w-full focus:outline-none"
-          placeholder="Add a new task"
+          class="flex-grow bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter your task..."
         />
         <button
           onclick="addTask()"
-          class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
+          class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md transition duration-300"
         >
           Add
         </button>
       </div>
-      <ul id="taskList" class="space-y-2"></ul>
+
+      <!-- Task List Section -->
+      <ul id="taskList" class="space-y-4">
+        <!-- Task Items will dynamically populate -->
+      </ul>
     </div>
 
     <script>
@@ -36,10 +63,12 @@
       function addTask() {
         const taskInput = document.getElementById("taskInput");
         const taskText = taskInput.value.trim();
+
         if (taskText === "") {
-          alert("Task cannot be empty!");
+          alert("Please enter a task.");
           return;
         }
+
         tasks.push({ text: taskText, completed: false });
         saveTasks();
         taskInput.value = "";
@@ -59,8 +88,8 @@
       }
 
       function editTask(index) {
-        const newText = prompt("Edit task:", tasks[index].text);
-        if (newText) {
+        const newText = prompt("Edit your task:", tasks[index].text);
+        if (newText && newText.trim() !== "") {
           tasks[index].text = newText.trim();
           saveTasks();
           renderTasks();
@@ -70,45 +99,46 @@
       function renderTasks() {
         const taskList = document.getElementById("taskList");
         taskList.innerHTML = "";
+
         tasks.forEach((task, index) => {
           const taskItem = document.createElement("li");
           taskItem.className =
-            "flex justify-between items-center bg-gray-200 px-4 py-2 rounded";
+            "fade-in flex justify-between items-center bg-gray-700 px-4 py-3 rounded-lg shadow transition duration-300";
 
           const taskText = document.createElement("span");
           taskText.textContent = task.text;
-          taskText.className = task.completed
-            ? "line-through text-gray-500"
-            : "";
+          taskText.className =
+            "text-base " +
+            (task.completed ? "line-through text-gray-400" : "text-gray-100");
 
-          const taskActions = document.createElement("div");
-          taskActions.className = "flex space-x-2";
+          const actions = document.createElement("div");
+          actions.className = "flex items-center gap-2";
 
           const completeButton = document.createElement("button");
           completeButton.textContent = task.completed ? "Undo" : "Complete";
           completeButton.className =
-            "bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600";
+            "bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-lg shadow-md transition duration-300";
           completeButton.onclick = () => toggleComplete(index);
 
           const editButton = document.createElement("button");
           editButton.textContent = "Edit";
           editButton.className =
-            "bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600";
+            "bg-yellow-600 hover:bg-yellow-500 text-white px-3 py-1 rounded-lg shadow-md transition duration-300";
           editButton.onclick = () => editTask(index);
 
           const deleteButton = document.createElement("button");
           deleteButton.textContent = "Delete";
           deleteButton.className =
-            "bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600";
+            "bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg shadow-md transition duration-300";
           deleteButton.onclick = () => deleteTask(index);
 
-          taskActions.append(completeButton, editButton, deleteButton);
-          taskItem.append(taskText, taskActions);
+          actions.append(completeButton, editButton, deleteButton);
+          taskItem.append(taskText, actions);
           taskList.appendChild(taskItem);
         });
       }
 
-      // Initial rendering of tasks
+      // Initial render
       renderTasks();
     </script>
   </body>
